@@ -26,4 +26,27 @@ typedef struct {
     addr_mode addrm;    // Addressing mode enum
 }opcode;
 
+// Macro for opcode definition list to condense raw definition
+// macro: OP(0x11, ORA, INDIRECT, 5, *)
+// raw: /* 0x11 */ {"ORA", "INDIRECT_Y", true, 5, instr::ORA, addr_mode::INDIRECT_Y,}
+
+// general definition for any function name
+#define _VFUNC_(name, n) name##n
+#define _VFUNC(name, n) _VFUNC_(name, n)
+#define VFUNC(func, ...) _VFUNC(func, __NARG__(__VA_ARGS__)) (__VA_ARGS__)
+#define OP(...) VFUNC(OP, __VA_ARGS__)
+
+// Invalid opcode
+#define OP1(opcode) \
+    {"KIL", "----", false, opcode, 0, instr:: ins, addr_mode:: addrm}
+
+// Standard opcode
+#define OP4(opcode) \
+    {#ins, #addrm, false, opcode, 0, instr:: ins, addr_mode:: addrm}
+
+// Opcode with extra cycle across pages
+#define OP5(opcode) \
+    {#ins, #addrm, true, opcode, 0, instr:: ins, addr_mode:: addrm}
+
+// Add opcode lookup table
 #endif
